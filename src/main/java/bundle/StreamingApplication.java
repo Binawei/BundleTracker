@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
 
-// TODO: proper generic type handling
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class StreamingApplication {
     private final Logger logger = LoggerFactory.getLogger(getClass());
