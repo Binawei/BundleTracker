@@ -60,7 +60,6 @@ public abstract class BaseComponentConfiguration implements ComponentConfigurati
     }
 
 
-
     @Override
     public int getParallelism() throws ConfigurationException {
         return getParallelismValue(CONFIG_PARALLELISM_KEY);

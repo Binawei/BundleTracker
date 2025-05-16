@@ -49,6 +49,9 @@ public class ConfigurationManager {
         config = ConfigFactory.parseFile(configFile).resolve();
     }
 
+    public static ConfigurationManager getInstance() {
+        return INSTANCE;
+    }
     /**
      * Indicates if the application is running in a local stream environment.
      * Defaults to true if the field is not set in the configuration file.
@@ -59,6 +62,34 @@ public class ConfigurationManager {
         return !config.hasPath(IS_LOCAL_KEY) || config.getBoolean(IS_LOCAL_KEY);
     }
 
+    public Config getApplicationConfig() {
+        return config.getConfig(ROOT_CONFIG_ELEMENT_NAME);
+    }
+
+    public synchronized static ConfigurationManager load(String[] args) throws IllegalArgumentException, FileNotFoundException {
+        if (INSTANCE == null) {
+            final String configFileOption = "file";
+            CommandLineParser parser = new DefaultParser();
+            Options options = new Options();
+            options.addOption("f", configFileOption, true, "Path to configuration file to load");
+            CommandLine cmd;
+            try {
+                cmd = parser.parse(options, args);
+            } catch (ParseException e) {
+                final String message = "Error parsing configuration";
+                logger.error(message, e);
+                throw new RuntimeException(message, e);
+            }
+            String configPath = cmd.getOptionValue(configFileOption);
+            if (configPath == null || configPath.length() == 0) {
+                throw new IllegalArgumentException("Configuration file path must be provided as a commandline argument");
+            }
+
+            final File configFile = new File(configPath);
+            INSTANCE = load(configFile);
+        }
+        return INSTANCE;
+    }
     /**
      * Get stream environment configuration.
      */
@@ -177,39 +208,6 @@ public class ConfigurationManager {
             default:
                 throw new RuntimeException(String.format("Cannot create configuration for operation '%s'", operation));
         }
-    }
-
-    public Config getApplicationConfig() {
-        return config.getConfig(ROOT_CONFIG_ELEMENT_NAME);
-    }
-
-    public synchronized static ConfigurationManager load(String[] args) throws IllegalArgumentException, FileNotFoundException {
-        if (INSTANCE == null) {
-            final String configFileOption = "file";
-            CommandLineParser parser = new DefaultParser();
-            Options options = new Options();
-            options.addOption("f", configFileOption, true, "Path to configuration file to load");
-            CommandLine cmd;
-            try {
-                cmd = parser.parse(options, args);
-            } catch (ParseException e) {
-                final String message = "Error parsing configuration";
-                logger.error(message, e);
-                throw new RuntimeException(message, e);
-            }
-            String configPath = cmd.getOptionValue(configFileOption);
-            if (configPath == null || configPath.length() == 0) {
-                throw new IllegalArgumentException("Configuration file path must be provided as a commandline argument");
-            }
-
-            final File configFile = new File(configPath);
-            INSTANCE = load(configFile);
-        }
-        return INSTANCE;
-    }
-
-    public static ConfigurationManager getInstance() {
-        return INSTANCE;
     }
 
     protected static void clear() {
