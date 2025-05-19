@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.UUID;
 
-public abstract class MetaDataProcessOperator extends JsonObjectProcessOperator {
+public class MetaDataProcessOperator extends JsonObjectProcessOperator {
     private static final long serialVersionUID = 1L;
     private static final String DEFAULT_META_DATA_KEY = "__meta_data__";
     private static final String CORRELATION_ID = "correlation_id";
